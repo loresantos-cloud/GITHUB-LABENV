@@ -38,6 +38,45 @@ activities = {
         "schedule": "Mondays, Wednesdays, Fridays, 2:00 PM - 3:00 PM",
         "max_participants": 30,
         "participants": ["john@mergington.edu", "olivia@mergington.edu"]
+    },
+    # Nuevas actividades deportivas
+    "Soccer Team": {
+        "description": "Train and compete in soccer matches",
+        "schedule": "Wednesdays, 4:00 PM - 5:30 PM",
+        "max_participants": 22,
+        "participants": []
+    },
+    "Basketball League": {
+        "description": "Practice and play basketball games",
+        "schedule": "Mondays, 5:00 PM - 6:30 PM",
+        "max_participants": 15,
+        "participants": []
+    },
+    # Nuevas actividades artísticas
+    "Painting Workshop": {
+        "description": "Explore painting techniques and create art",
+        "schedule": "Thursdays, 3:00 PM - 4:30 PM",
+        "max_participants": 10,
+        "participants": []
+    },
+    "Music Band": {
+        "description": "Join the school band and rehearse musical pieces",
+        "schedule": "Fridays, 4:00 PM - 5:30 PM",
+        "max_participants": 8,
+        "participants": []
+    },
+    # Nuevas actividades intelectuales
+    "Math Olympiad": {
+        "description": "Prepare for math competitions and solve challenging problems",
+        "schedule": "Tuesdays, 4:30 PM - 5:30 PM",
+        "max_participants": 16,
+        "participants": []
+    },
+    "Science Club": {
+        "description": "Conduct experiments and discuss scientific topics",
+        "schedule": "Thursdays, 2:00 PM - 3:30 PM",
+        "max_participants": 18,
+        "participants": []
     }
 }
 
@@ -62,6 +101,22 @@ def signup_for_activity(activity_name: str, email: str):
     # Get the specific activity
     activity = activities[activity_name]
 
-    # Add student
+    if email in activity["participants"]:
+        return {"error": "El estudiante ya está inscrito en esta actividad."}
     activity["participants"].append(email)
     return {"message": f"Signed up {email} for {activity_name}"}
+
+
+# Nuevo endpoint para eliminar participante
+from fastapi import Query
+
+@app.delete("/activities/{activity_name}/signup")
+def remove_participant(activity_name: str, email: str = Query(...)):
+    """Remove a student from an activity"""
+    if activity_name not in activities:
+        raise HTTPException(status_code=404, detail="Activity not found")
+    activity = activities[activity_name]
+    if email not in activity["participants"]:
+        raise HTTPException(status_code=404, detail="Participant not found in this activity")
+    activity["participants"].remove(email)
+    return {"message": f"Removed {email} from {activity_name}"}
