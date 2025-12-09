@@ -142,3 +142,9 @@ footer {
   padding: 20px;
   color: #666;
 }
+
+.participant {
+  /* Add your desired styles here */
+  color: #333;
+  font-weight: bold;
+}
